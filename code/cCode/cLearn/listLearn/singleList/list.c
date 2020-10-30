@@ -32,7 +32,9 @@ nideListPtr _initList() {
 
 int creatOneNodeAtHead(nideListPtr headList, int data) {
     nideListPtr usrNodeList = (nideListPtr)malloc(sizeof(nodeList));
-    assert(usrNodeList);
+    if(usrNodeList == NULL) {
+        return error;
+    }
     if(headList == NULL) {
         return error;
     }
@@ -57,37 +59,39 @@ void printfList(nideListPtr headList) {
 int deleteNodeWithData(nideListPtr headList, int data) {
     nideListPtr  headlist = headList;
     unsigned int flag = 0;
-    if(headlist->Next == NULL) {
+    if((headlist->Next == NULL) || (headlist == NULL)) {
         return error;
     }
-    while(((headlist = headlist->Next) != NULL) && (headlist->data == data)) {
-        if(headlist->Next == NULL) {
-            free(headlist);
-            headlist = NULL;
-        }
+    //printfList(headList); 
+    while(((headList = headlist->Next) == NULL) || (headlist->data == data));
+    if(headlist->Next == NULL) {
+        printf("headlist->Next %d\n",headList->data);
+        free(headlist);
+        headlist = NULL;
+    }
+    else {
+        printf("headlist->Next %d\n",headList->data);
         nideListPtr tempoaryNode = headlist;
         headlist = tempoaryNode->Next;
         free(tempoaryNode);
-        tempoaryNode = NULL;
-        flag++;
+        tempoaryNode = NULL;       
     }
-    if(flag > 0)
-        return flag;
-    return error;
+   // if(flag > 0)
+   //     return flag;
+    return success;
 }
 
 int main() {
     int ret = 1;
     nideListPtr headList = _initList();
     //ret = initList(&headList);
-    printf("initList ret is %d \n", ret);
-    ret = creatOneNodeAtHead(headList, 1);
-    printf("creatOneNodeAtHead ret is %d \n", ret);
-    ret = creatOneNodeAtHead(headList, 2);
+    ret = creatOneNodeAtHead(headList, 6);
     printf("creatOneNodeAtHead ret is %d \n", ret);
     ret = creatOneNodeAtHead(headList, 3);
     printf("creatOneNodeAtHead ret is %d \n", ret);
     ret = creatOneNodeAtHead(headList, 2);
+    printf("creatOneNodeAtHead ret is %d \n", ret);
+    ret = creatOneNodeAtHead(headList, 5);
     printf("creatOneNodeAtHead ret is %d \n", ret);
     printfList(headList); 
     ret = deleteNodeWithData(headList, 2);
