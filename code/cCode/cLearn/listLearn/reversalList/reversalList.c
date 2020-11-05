@@ -34,6 +34,9 @@ void printfList(listNodePtr headList) {
     listNodePtr usrList = headList;
     int i = 1;
     printf("printf start!\n");
+    if(NULL == headList) {
+        printf("no Node!\n");
+    }
     while(NULL != usrList) {
         printf("node %d is %d \t", i, usrList->data);
         if(0 == i%5) {
@@ -45,22 +48,21 @@ void printfList(listNodePtr headList) {
     printf("\nprintf end!\n");
 }
 
-void deleteAllList(listNodePtr headList) {
-    listNodePtr usrList = headList;
+listNodePtr deleteAllList(listNodePtr headList) {
     listNodePtr tempoaryList = NULL;
 
-    while(usrList != NULL) {
-        tempoaryList = usrList;
-        usrList = usrList->next;
+    while(headList != NULL) {
+        tempoaryList = headList;
+        headList = headList->next;
         free(tempoaryList);
         tempoaryList = NULL;
     }
-    
+    return headList;
 }
 
 void main() {
     listNodePtr headList = creatList();
     printfList(headList);
-    deleteAllList(headList);
+    headList = deleteAllList(headList);
     printfList(headList);
 }
