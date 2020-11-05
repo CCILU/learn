@@ -27,7 +27,7 @@ typedef struct nodelistFind {
 nideListPtr _initList() {
     nideListPtr headList = (nideListPtr)malloc(sizeof(nodeList));
     assert(headList);
-    return headList;   
+    return headList;
 }
 
 int creatOneNodeAtHead(nideListPtr headList, int data) {
@@ -46,10 +46,13 @@ int creatOneNodeAtHead(nideListPtr headList, int data) {
 
 void printfList(nideListPtr headList) {
     int count = 1;
-    if(headList == NULL)
+    nideListPtr pheadList = headList;
+    if(pheadList == NULL) {
+        printf("NO node! \n");
         return;
-    while((headList = headList->Next) != NULL) {
-        printf("Node %d is: %d \t", count, headList->data);
+    }
+    while((pheadList = pheadList->Next) != NULL) {
+        printf("Node %d is: %d \t", count, pheadList->data);
         count++;
     }
     printf("\n");
@@ -57,34 +60,40 @@ void printfList(nideListPtr headList) {
 }
 
 int deleteNodeWithData(nideListPtr headList, int data) {
-    nideListPtr  headlist = headList;
-    unsigned int flag = 0;
-    if((headlist->Next == NULL) || (headlist == NULL)) {
-        return error;
+    nideListPtr tempoaryNode = NULL;
+    nideListPtr  pheadlist = headList;
+    if(pheadlist == NULL) {
+        exit(0);
     }
-    //printfList(headList); 
-    while(((headList = headlist->Next) == NULL) || (headlist->data == data));
-    if(headlist->Next == NULL) {
-        printf("headlist->Next %d\n",headList->data);
-        free(headlist);
-        headlist = NULL;
+    while((pheadlist->data != data) && (pheadlist->Next != NULL)) {
+        tempoaryNode = pheadlist;
+        pheadlist = pheadlist->Next;
+    }
+    if(pheadlist == headList) {
+        headList = pheadlist->Next;
     }
     else {
-        printf("headlist->Next %d\n",headList->data);
-        nideListPtr tempoaryNode = headlist;
-        headlist = tempoaryNode->Next;
-        free(tempoaryNode);
-        tempoaryNode = NULL;       
+        tempoaryNode->Next = pheadlist->Next;
     }
-   // if(flag > 0)
-   //     return flag;
+    free(pheadlist);
+    pheadlist = NULL;
+    return success;
+}
+
+int deleteAllNode(nideListPtr headList) {
+    nideListPtr usrNodeList = headList;
+    nideListPtr tempoaryNode = NULL;
+    while(usrNodeList != NULL) {
+        tempoaryNode = usrNodeList->Next;
+        free(usrNodeList);
+        usrNodeList = tempoaryNode;
+    }
     return success;
 }
 
 int main() {
     int ret = 1;
     nideListPtr headList = _initList();
-    //ret = initList(&headList);
     ret = creatOneNodeAtHead(headList, 6);
     printf("creatOneNodeAtHead ret is %d \n", ret);
     ret = creatOneNodeAtHead(headList, 3);
@@ -93,9 +102,13 @@ int main() {
     printf("creatOneNodeAtHead ret is %d \n", ret);
     ret = creatOneNodeAtHead(headList, 5);
     printf("creatOneNodeAtHead ret is %d \n", ret);
-    printfList(headList); 
-    ret = deleteNodeWithData(headList, 2);
+    printfList(headList);
+    deleteNodeWithData(headList, 2);
+   // DeleteNode(headList, 2);
     printf("deleteNodeWithData ret is %d \n", ret);
+    printfList(headList);
+    ret = deleteAllNode(headList);
+    printf("deleteAllNode ret is %d \n", ret);
     printfList(headList);
 
     return 0;
