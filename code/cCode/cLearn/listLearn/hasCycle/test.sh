@@ -1,0 +1,1 @@
+gcc *.c -g -w -o test -llist

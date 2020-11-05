@@ -28,7 +28,7 @@ nideListPtr _initList() {
     nideListPtr headList = (nideListPtr)malloc(sizeof(nodeList));
     assert(headList);
     headList->Next = NULL;
-    headList->data = 0;
+    headList->data = 0; 
     return headList;
 }
 

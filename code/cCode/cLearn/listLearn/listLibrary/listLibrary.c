@@ -1,11 +1,4 @@
-#include <stdio.h>
-#include <stdlib.h>
-
-typedef struct reversalList
-{
-    int data;
-    struct reversalList *next;
-}listNode,*listNodePtr;
+#include "listLib.h"
 
 listNodePtr creatList(int count) {
     int i = 1;
@@ -57,28 +50,4 @@ listNodePtr deleteAllList(listNodePtr headList) {
         tempoaryList = NULL;
     }
     return headList;
-}
-
-listNodePtr reversalList(listNodePtr headList) {
-    listNodePtr tempoaryList = NULL;
-    listNodePtr usrList = headList;
-    listNodePtr outList = NULL;
-
-    while(usrList != NULL) {
-        tempoaryList = usrList->next;
-        usrList->next = outList;
-        outList = usrList;
-        usrList = tempoaryList;
-    }
-
-    return outList;
-}
-
-void main() {
-    listNodePtr headList = creatList(10);
-    printfList(headList);
-    headList = reversalList(headList);
-    printfList(headList);
-    headList = deleteAllList(headList);
-    printfList(headList);
 }
