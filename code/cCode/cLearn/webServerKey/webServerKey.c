@@ -39,9 +39,8 @@ void http_send(int sock_client,char *content)
 {
 	char HTTP_HEADER[BUFF_SIZE],HTTP_INFO[BUFF_SIZE];
 	int len = strlen(content);
-	sprintf(HTTP_HEADER, http_res_tmpl);
+	sprintf(HTTP_HEADER, http_res_tmpl, "%s%s");
 	len = sprintf(HTTP_INFO, "%s%s", HTTP_HEADER,content);
-	//printf("\nsend ok!\n");
 	send(sock_client,HTTP_INFO,len,0);
 }
 void handle_signal(int sign)
