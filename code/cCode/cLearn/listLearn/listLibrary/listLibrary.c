@@ -47,7 +47,6 @@ listNodePtr deleteAllList(listNodePtr headList) {
         tempoaryList = headList;
         headList = headList->next;
         free(tempoaryList);
-        tempoaryList = NULL;
     }
     return headList;
 }
