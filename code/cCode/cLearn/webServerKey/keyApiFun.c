@@ -167,7 +167,7 @@ static KEYHANDLE UseKey() {
 
 #ifdef DEBUG_KEYAPI
 void main() {
-    KEYHANDLE keyHandle = NULL;
+    KEYHANLDEPTR keyHandle = NULL;
 
     keyHandle =  UseKey();
     if(keyHandle !=  NULL) {
