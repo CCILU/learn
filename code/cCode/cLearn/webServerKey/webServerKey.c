@@ -1,25 +1,10 @@
-#include <stdio.h>
-#include <netinet/in.h>
-#include <sys/socket.h>
-#include <sys/types.h>
-#include <arpa/inet.h>
-#include <unistd.h>
-#include <string.h>
-#include <stdlib.h>
-#include <fcntl.h>
-#include <sys/shm.h>
-#include <signal.h>
-#include <errno.h>
-#include "DTlog.h"
+#include "webFun.h"
 
 int  DTKMServerLevel[5] = {DT_NO_LOG_LEVEL, DT_DEBUG_LEVEL, DT_INFO_LEVEL, DT_WARNING_LEVEL, DT_ERROR_LEVEL};
 int sockfd;
-
-#define PORT 8888
-#define SERV "127.0.0.1"
-#define QUEUE 20
-#define BUFF_SIZE 4096
-
+char *buff;
+char *retJson;
+pthread_t logMonitoringThreadId;
 char *http_res_tmpl_bak = "HTTP/1.1 200 OK\r\n"
         "Server: Cleey's Server V1.0\r\n"
 		"Accept-Ranges: bytes\r\n"
@@ -33,48 +18,44 @@ char *http_res_tmpl = "HTTP/1.1 200 OK\r\n"
         "Access-Control-Allow-Origin: *\r\n"
 		"Content-Type: text/html; charset=GB2312\r\n\r\n";
 
-void handle_signal(int sign); // 退出信号处理
-void http_send(int sock,char *content); // http 发送相应报文
-void http_send(int sock_client,char *content)
-{
-	char HTTP_HEADER[BUFF_SIZE],HTTP_INFO[BUFF_SIZE];
-	int len = strlen(content);
-	sprintf(HTTP_HEADER, http_res_tmpl);
-	len = sprintf(HTTP_INFO, "%s%s", HTTP_HEADER,content);
-	//printf("\nsend ok!\n");
-	send(sock_client,HTTP_INFO,len,0);
-}
-void handle_signal(int sign)
-{
-    fputs("\nSIGNAL INTERRUPT \nBye Cleey! \nSAFE EXIT\n",stdout);
-    close(sockfd);
-    exit(0);
-}
+
 
 int main(int argc, char *argv[]) {
     int portInt = 0;
+    int rv = 0;
     int opt=1;
-	int count = 0; // 计数
-
+	int count = 0; // 计数prhread_create();
+    //接收自定义信号量
     signal(SIGINT,handle_signal);
+    //启动一个线程，用于监控日志的大小，防止长时间使用日志过大，日志路径在/home/
+    rv = pthread_create(&logMonitoringThreadId, NULL, (void*)logMonitoringThread, NULL);
+    if(rv) {
+        DTKMServer_Log(__FILE__, __LINE__, DTKMServerLevel[4], 0, "prhread_create error!");
+    }
     // 定义 socket
     sockfd = socket(AF_INET,SOCK_STREAM,0);
     // 定义 sockaddr_in
     struct sockaddr_in skaddr;
     // ipv4
     skaddr.sin_family = AF_INET;
-    if(argc > 1) {
+    if(argc > 1 && argc < 3) {
         portInt = atoi(argv[1]);
+        printf("Port = %d\n", portInt);
         skaddr.sin_port   = htons(portInt);
+        printf("IP = %s\n", SERV);
         skaddr.sin_addr.s_addr = inet_addr(SERV);
     }
     else if(argc > 2){
         portInt = atoi(argv[1]);
-        skaddr.sin_port   = htons(PORT);
+        printf("Port = %d\n",portInt);
+        skaddr.sin_port   = htons(portInt);
+        printf("IP = %s\n", argv[2]);
         skaddr.sin_addr.s_addr = inet_addr(argv[2]);
     }
     else {
-        skaddr.sin_port   = htons(portInt);
+        printf("Port = %d\n", PORT);
+        printf("IP = %s\n", SERV);
+        skaddr.sin_port   = htons(PORT);
         skaddr.sin_addr.s_addr = inet_addr(SERV);
     }
     // bind，绑定 socket 和 sockaddr_in
@@ -84,8 +65,66 @@ int main(int argc, char *argv[]) {
             exit(1);
     }
     // listen，开始添加端口
-    if( listen(sockfd,QUEUE) == -1 ){
+    if( listen(sockfd,QUEUE) == -1 ) {
             perror("listen error");
             exit(1);
     }
+    // 客户端信息
+    struct sockaddr_in claddr;
+    socklen_t length = sizeof(claddr);
+    buff = (char *)malloc(BUFF_SIZE+1);
+    if(buff == NULL) {
+        DTKMServer_Log(__FILE__, __LINE__, DTKMServerLevel[4], 0, "buff malloc error!");
+        return -1;
+    }
+	retJson = (char *)malloc(BUFF_SIZE+1);
+    if(retJson == NULL) {
+        free(buff);
+        DTKMServer_Log(__FILE__, __LINE__, DTKMServerLevel[4], 0, "retJson malloc error!");
+        return -1;
+    }
+    while(1) {
+		memset(retJson, 0, BUFF_SIZE);
+        memset(buff, 0, BUFF_SIZE);
+        printf("等待连接...\n");
+        int sock_client = accept(sockfd,(struct sockaddr *)&claddr, &length);
+        if(sock_client < 0) {
+            perror("accept error");
+            free(buff);
+            free(retJson);
+            pthread_exit(&logMonitoringThreadId);
+            exit(1);
+        }
+        int len = recv(sock_client,buff,sizeof(buff),0);
+		if( len > 0)
+            printf("buff = %s\n", buff);
+		else {
+			printf("recv error:%s\n", strerror(errno));
+			continue;
+		}
+		char* json = strstr(buff,"json=");
+		if(json != NULL) {
+			json = json+5;
+			printf("JSON = %s\n",json);
+		}
+		else {
+			printf("buffer no json\n");
+			continue;
+		}
+		rv = invokeKeyfunc(json, retJson);
+        if(rv != 0) {
+            DTKMServer_Log(__FILE__, __LINE__, DTKMServerLevel[4], 0, "invokeKeyfunc error!");
+            continue;
+        }
+		printf("retJson = %s\n",retJson);
+		http_send(sock_client,retJson);
+        close(sock_client);
+    }
+    free(buff);
+    free(retJson);
+    fputs("Bye Cleey",stdout);
+    close(sockfd);
+    pthread_exit(&logMonitoringThreadId);
+	DTKMServer_Log(__FILE__, __LINE__, DTKMServerLevel[2], 0, "key service stop");
+    return 0;
 }

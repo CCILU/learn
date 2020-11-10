@@ -21,7 +21,7 @@ typedef unsigned int            ULONG;
 
 typedef char                    INT8;
 typedef short                   INT16;
-typedef int						INT32;
+typedef long					INT32;
 
 
 typedef UINT8					UCHAR;
@@ -35,7 +35,7 @@ typedef ULONG					DWORD;
 typedef UINT32					FLAGS;
 typedef CHAR *					LPSTR;
 
-typedef    int				    HANDLE;
+typedef  void*				    HANDLE;
 typedef HANDLE					DEVHANDLE;
 typedef HANDLE					HAPPLICATION;
 typedef HANDLE					HCONTAINER;

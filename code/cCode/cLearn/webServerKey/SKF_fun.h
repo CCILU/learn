@@ -20,7 +20,7 @@ extern "C"{
 #define SGD_SM4_ECB		0x00000401	  //SM4�㷨ECB����ģʽ
 #define SGD_SM4_CBC		0x00000402    //SM4�㷨CBC����ģʽ
 #define SGD_SM3	        0x00000001	  //SM3�Ӵ��㷨
-//#define DEVAPI			__attribute__((__stdcall__))		 
+//#define DEVAPI			__attribute__((__stdcall__))
 /*�ļ�����*/
 typedef struct Struct_FILEATTRIBUTE{
 CHAR	FileName[32];//����
@@ -318,7 +318,7 @@ INT32 SKF_GetPINInfo(HAPPLICATION hApplication, ULONG  ulPINType, ULONG *pulMaxR
 	    pulRetryCount	[OUT] ���������Դ�����
 ����ֵ	SAR_OK��	�ɹ���
         ������		�����롣
-**************************************************************/		
+**************************************************************/
 INT32 SKF_ChangePIN (HAPPLICATION hApplication, ULONG ulPINType, LPSTR szOldPin, LPSTR szNewPin, ULONG *pulRetryCount);
 /*************************************************************
 ��������	���û���PIN��������ͨ�����øú����������û�PIN�롣
@@ -330,8 +330,8 @@ INT32 SKF_ChangePIN (HAPPLICATION hApplication, ULONG ulPINType, LPSTR szOldPin,
 ����ֵ	SAR_OK��	�ɹ���
         ������		�����롣
 ��ע	��֤�����ԱPIN���ܹ������û�PIN�룬��������Administrator PIN����ȷ�����Ѿ������������ʧ�ܣ�������Administrator PIN�����Դ�����
-**************************************************************/		
-INT32 SKF_UnblockPIN(HAPPLICATION hApplication, LPSTR szAdminPIN, LPSTR szNewUserPIN, ULONG *pulRetryCount);	
+**************************************************************/
+INT32 SKF_UnblockPIN(HAPPLICATION hApplication, LPSTR szAdminPIN, LPSTR szNewUserPIN, ULONG *pulRetryCount);
 /*************************************************************
 ��������	���Ӧ�õ�ǰ�İ�ȫ״̬��
 ����   	hApplication	[IN] Ӧ�þ����
@@ -352,7 +352,7 @@ INT32 SKF_ClearSecureState(HAPPLICATION hApplication);
 ����ֵ	SAR_OK��	�ɹ���
         ������		�����롣
 ��ע	Ȩ��Ҫ����Ҫ�豸Ȩ�ޡ�
-**************************************************************/									
+**************************************************************/
 INT32 SKF_CreateApplication(DEVHANDLE hDev, LPSTR szAppName, 
 							LPSTR szAdminPin, DWORD dwAdminPinRetryCount,
 							LPSTR szUserPin, DWORD dwUserPinRetryCount,

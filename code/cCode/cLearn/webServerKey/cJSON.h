@@ -37,6 +37,7 @@ extern "C"
 extern const char* cJSON_Version(void);
 
 #include <stddef.h>
+#include <math.h>
 
 /* cJSON Types: */
 #define cJSON_Invalid (0)
