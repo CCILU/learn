@@ -39,11 +39,11 @@ static int enumKey(char *_keyName) { //默认一个设备
 
 static DEVHANDLE connectKey(char *_keyName) {
     ULONG ret = 0;
-    DEVHANDLE devHandle = NULL;
+    DEVHANDLE devHandle = 0;
     ret = SKF_ConnectDev (_keyName, &devHandle);
     if(ret != 0x00000000) {
         DTKMServer_Log(__FILE__, __LINE__, DTKMServerLevel[4], 0, "connectKey SKF_ConnectDev error!%X", ret);
-        return NULL;
+        return 0;
     }
     return devHandle;
 }
@@ -76,11 +76,11 @@ static int enumApplication(char *_appName, DEVHANDLE hDev) { //默认为单应�
 
 static HAPPLICATION connectApplication(char *_appName,  DEVHANDLE hDev) {
     ULONG ret = 0;
-    HANDLE appHandle = NULL;
+    HANDLE appHandle = 0;
     ret = SKF_OpenApplication(hDev, _appName, &appHandle);
     if(ret != 0x00000000) {
         DTKMServer_Log(__FILE__, __LINE__, DTKMServerLevel[4], 0, "connectApplication SKF_OpenApplication error!%X", ret);
-        return NULL;
+        return 0;
     }
     return appHandle;
 }
@@ -109,18 +109,18 @@ static int enumContainer(char *_conName, HAPPLICATION hApplication) {//默认为
 
 static HCONTAINER connectContainer(char *_conName, HAPPLICATION hApplication) {
     ULONG ret = 0;
-    HANDLE conHandle = NULL;
+    HANDLE conHandle = 0;
     ret = SKF_OpenContainer(hApplication, _conName, &conHandle);
     if(ret != 0x00000000) {
         DTKMServer_Log(__FILE__, __LINE__, DTKMServerLevel[4], 0, "connectContainer SKF_OpenContainer error!%X", ret);
-        return NULL;
+        return 0;
     }
     return conHandle;
 }
 
-static KEYHANDLE UseKey() {
+static KEYHANLDEPTR UseKey() {
     int ret = 1;
-    KEYHANDLE keyHandle;
+    KEYHANLDEPTR keyHandle;
     char* UseString = (char*)malloc(TINY_Buff);
     if(UseString == NULL) {
         DTKMServer_Log(__FILE__, __LINE__, DTKMServerLevel[4], 0, "UseKey malloc error!");
@@ -132,34 +132,34 @@ static KEYHANDLE UseKey() {
         DTKMServer_Log(__FILE__, __LINE__, DTKMServerLevel[4], 0, "UseKey enumKey error!");
         return NULL;
     }
-    keyHandle._DevHandle = connectKey(UseString);
-    if(keyHandle._DevHandle == NULL) {
+    keyHandle->_DevHandle = connectKey(UseString);
+    if(keyHandle->_DevHandle == 0) {
         DTKMServer_Log(__FILE__, __LINE__, DTKMServerLevel[4], 0, "UseKey connectKey error!");
         return NULL;
     }
     memset(UseString, 0x00, TINY_Buff);
-    ret = enumApplication(UseString, keyHandle._DevHandle);
+    ret = enumApplication(UseString, keyHandle->_DevHandle);
     if(ret != success) {
         DTKMServer_Log(__FILE__, __LINE__, DTKMServerLevel[4], 0, "UseKey enumApplication error!");
         return NULL;
     }
-    keyHandle._AppHandle = connectApplication(UseString,  keyHandle._DevHandle);
-    if(keyHandle._AppHandle == NULL) {
+    keyHandle->_AppHandle = connectApplication(UseString,  keyHandle->_DevHandle);
+    if(keyHandle->_AppHandle == 0) {
         DTKMServer_Log(__FILE__, __LINE__, DTKMServerLevel[4], 0, "UseKey connectApplication error!");
-        SKF_DisConnectDev(keyHandle._DevHandle);
+        SKF_DisConnectDev(keyHandle->_DevHandle);
         return NULL;
     }
     memset(UseString, 0x00, TINY_Buff);
-    ret = enumContainer(UseString, keyHandle._AppHandle);
+    ret = enumContainer(UseString, keyHandle->_AppHandle);
     if(ret != success) {
         DTKMServer_Log(__FILE__, __LINE__, DTKMServerLevel[4], 0, "UseKey enumContainer error!");
         return NULL;
     }
-    keyHandle._ConHandle = connectContainer(UseString, keyHandle._AppHandle);
-    if(keyHandle._ConHandle == NULL) {
+    keyHandle->_ConHandle = connectContainer(UseString, keyHandle->_AppHandle);
+    if(keyHandle->_ConHandle == 0) {
         DTKMServer_Log(__FILE__, __LINE__, DTKMServerLevel[4], 0, "UseKey connectContainer error!");
-        SKF_DisConnectDev(keyHandle._DevHandle);
-        SKF_CloseApplication(keyHandle._AppHandle);
+        SKF_DisConnectDev(keyHandle->_DevHandle);
+        SKF_CloseApplication(keyHandle->_AppHandle);
         return NULL;
     }
     return keyHandle;

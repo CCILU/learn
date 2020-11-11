@@ -35,7 +35,7 @@ typedef ULONG					DWORD;
 typedef UINT32					FLAGS;
 typedef CHAR *					LPSTR;
 
-typedef  void*				    HANDLE;
+typedef  int				    HANDLE;
 typedef HANDLE					DEVHANDLE;
 typedef HANDLE					HAPPLICATION;
 typedef HANDLE					HCONTAINER;
