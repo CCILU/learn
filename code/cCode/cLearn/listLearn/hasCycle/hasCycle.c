@@ -54,6 +54,6 @@ void main() {
     printf("hasCycleList2 return is %d\n", flag);
     makeAListDisCycle(headList);
     flag = hasCycleList(headList);
-    printf("hasCycleList3 return is %d\n", flag);
+    printf("hasCycleList3 return is  %d\n", flag);
     deleteAllList(headList);
 }
