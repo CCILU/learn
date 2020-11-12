@@ -15,6 +15,6 @@ static int enumApplication(char *_appName, DEVHANDLE hDev);
 static HAPPLICATION connectApplication(char *_appName,  DEVHANDLE hDev);
 static int enumContainer(char *_conName, HAPPLICATION hApplication);
 static HCONTAINER connectContainer(char *_conName, HAPPLICATION hApplication);
-static KEYHANLDEPTR UseKey();
+static int UseKey(KEYHANLDEPTR keyHandle) ;
 
 #endif

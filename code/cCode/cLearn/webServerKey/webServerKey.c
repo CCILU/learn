@@ -18,26 +18,6 @@ char *http_res_tmpl = "HTTP/1.1 200 OK\r\n"
         "Access-Control-Allow-Origin: *\r\n"
 		"Content-Type: text/html; charset=GB2312\r\n\r\n";
 
-<<<<<<< HEAD
-
-=======
-void handle_signal(int sign); // 退出信号处理
-void http_send(int sock,char *content); // http 发送相应报文
-void http_send(int sock_client,char *content)
-{
-	char HTTP_HEADER[BUFF_SIZE],HTTP_INFO[BUFF_SIZE];
-	int len = strlen(content);
-	sprintf(HTTP_HEADER, http_res_tmpl, "%s%s");
-	len = sprintf(HTTP_INFO, "%s%s", HTTP_HEADER,content);
-	send(sock_client,HTTP_INFO,len,0);
-}
-void handle_signal(int sign)
-{
-    fputs("\nSIGNAL INTERRUPT \nBye Cleey! \nSAFE EXIT\n",stdout);
-    close(sockfd);
-    exit(0);
-}
->>>>>>> e2be050f5db71ecfc211483150319424a7af3420
 
 int main(int argc, char *argv[]) {
     int portInt = 0;
