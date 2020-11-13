@@ -17,22 +17,30 @@ static int enumKey(char *_keyName) { //默认一个设备
     ULONG pulSize = 0;
     ret = SKF_EnumDev(1, KeyName, &pulSize);
     if(ret != 0x00000000) {
-        DTKMServer_Log(__FILE__, __LINE__, DTKMServerLevel[4], 0, "emumKey SKF_EnumDev error!%X", ret);
+        DTKMServer_Log(__FILE__, __LINE__, DTKMServerLevel[4], 0, "enumKey SKF_EnumDev error!%X", ret);
         return false;
     }
+    printf("pulSize = %d\n",pulSize);
     KeyName = (char *)malloc(pulSize+1);
     if(KeyName == NULL) {
-        DTKMServer_Log(__FILE__, __LINE__, DTKMServerLevel[4], 0, "emumKey malloc error!");
+        DTKMServer_Log(__FILE__, __LINE__, DTKMServerLevel[4], 0, "enumKey malloc error!");
         return false;
     }
     memset(KeyName, 0x00, pulSize+1);
     ret = SKF_EnumDev(1, KeyName, &pulSize);
     if(ret != 0x00000000) {
-        DTKMServer_Log(__FILE__, __LINE__, DTKMServerLevel[4], 0, "emumKey SKF_EnumDev error!%X", ret);
+        DTKMServer_Log(__FILE__, __LINE__, DTKMServerLevel[4], 0, "enumKey SKF_EnumDev error!%X", ret);
         free(KeyName);
         return false;
     }
-    memcpy(_keyName, KeyName, pulSize);
+    printf("pulSize = %d\n",strlen(KeyName));
+    printf("%s\n",KeyName);
+    if(_keyName == NULL) {
+        printf("_keyName is NULL\n");
+        free(KeyName);
+        return false;
+    }
+    memcpy(_keyName,  KeyName,  16);
     free(KeyName);
     return success;
 }
@@ -161,17 +169,21 @@ static int UseKey(KEYHANLDEPTR keyHandle) {
         SKF_CloseApplication(keyHandle->_AppHandle);
         return false;
     }
+
+    free(UseString);
+    UseString = NULL;
     return success;
 }
 
 #ifdef DEBUG_KEYAPI
 void main() {
-    KEYHANDLE keyHandle;
-    int ret = 0;
-    ret =  UseKey(&keyHandle);
-    if(ret !=  success) {
-        printf("ok \n");
+    int ret = 3;
+    KEYHANDLE  keyHandle = {0};
+    ret = UseKey(&keyHandle);
+    if(ret != success) {
+        printf("get handle error, please check log! \n");
     }
+
 }
 
 #endif

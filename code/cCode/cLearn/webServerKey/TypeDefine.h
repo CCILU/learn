@@ -13,15 +13,15 @@
 
 #define	DEBUG					0
 
-typedef void                    T_VOID;
+typedef void                        T_VOID;
 typedef unsigned char           UINT8;
 typedef unsigned short          UINT16;
-typedef unsigned int			UINT32;
-typedef unsigned int            ULONG;
+typedef unsigned int		      UINT32;
+typedef unsigned long            ULONG;
 
 typedef char                    INT8;
 typedef short                   INT16;
-typedef long					INT32;
+typedef int					      INT32;
 
 
 typedef UINT8					UCHAR;
@@ -35,7 +35,7 @@ typedef ULONG					DWORD;
 typedef UINT32					FLAGS;
 typedef CHAR *					LPSTR;
 
-typedef  int				    HANDLE;
+typedef int 			             HANDLE;
 typedef HANDLE					DEVHANDLE;
 typedef HANDLE					HAPPLICATION;
 typedef HANDLE					HCONTAINER;
