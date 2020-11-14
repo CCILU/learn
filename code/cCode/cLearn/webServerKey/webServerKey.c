@@ -68,7 +68,10 @@ int main(int argc, char *argv[]) {
             perror("listen error");
             exit(1);
     }
+    pthread_exit(&logMonitoringThreadId);
     // 客户端信息
+    //加一个守护进程20201114
+
     struct sockaddr_in claddr;
     socklen_t length = sizeof(claddr);
     buff = (char *)malloc(BUFF_SIZE+1);
@@ -91,7 +94,7 @@ int main(int argc, char *argv[]) {
             perror("accept error");
             free(buff);
             free(retJson);
-            pthread_exit(&logMonitoringThreadId);
+            
             exit(1);
         }
         int len = recv(sock_client,buff,sizeof(buff),0);
@@ -123,7 +126,6 @@ int main(int argc, char *argv[]) {
     free(retJson);
     fputs("Bye Cleey",stdout);
     close(sockfd);
-    pthread_exit(&logMonitoringThreadId);
 	DTKMServer_Log(__FILE__, __LINE__, DTKMServerLevel[2], 0, "key service stop");
     return 0;
 }
