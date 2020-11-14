@@ -257,7 +257,6 @@ int SignMessageWithEccKeyAndWithoutSm3(BYTE *pbData, ULONG  ulDataLen, char *Sig
     return success;
 }
 
-int 
 
 #ifdef DEBUG_KEYAPI
 void main() {
