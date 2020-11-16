@@ -68,10 +68,7 @@ int main(int argc, char *argv[]) {
             perror("listen error");
             exit(1);
     }
-    pthread_exit(&logMonitoringThreadId);
     // 客户端信息
-    //加一个守护进程20201114
-
     struct sockaddr_in claddr;
     socklen_t length = sizeof(claddr);
     buff = (char *)malloc(BUFF_SIZE+1);
@@ -94,12 +91,13 @@ int main(int argc, char *argv[]) {
             perror("accept error");
             free(buff);
             free(retJson);
-            
             exit(1);
         }
-        int len = recv(sock_client,buff,sizeof(buff),0);
-		if( len > 0)
+        int len = recv(sock_client, buff, BUFF_SIZE, 0);
+        //int len = recv(sock_client,buff,sizeof(buff),0);
+		if( len > 0) {
             printf("buff = %s\n", buff);
+        }
 		else {
 			printf("recv error:%s\n", strerror(errno));
 			continue;
@@ -107,10 +105,11 @@ int main(int argc, char *argv[]) {
 		char* json = strstr(buff,"json=");
 		if(json != NULL) {
 			json = json+5;
-			printf("JSON = %s\n",json);
+			printf("json = %s\n",json);
 		}
 		else {
 			printf("buffer no json\n");
+            //http_send(sock_client,retJson);
 			continue;
 		}
 		rv = invokeKeyfunc(json, retJson);
@@ -118,6 +117,7 @@ int main(int argc, char *argv[]) {
             DTKMServer_Log(__FILE__, __LINE__, DTKMServerLevel[4], 0, "invokeKeyfunc error!");
             continue;
         }
+        printf("invokeKeyfunc rv= %X\n",rv);
 		printf("retJson = %s\n",retJson);
 		http_send(sock_client,retJson);
         close(sock_client);
@@ -126,6 +126,7 @@ int main(int argc, char *argv[]) {
     free(retJson);
     fputs("Bye Cleey",stdout);
     close(sockfd);
-	DTKMServer_Log(__FILE__, __LINE__, DTKMServerLevel[2], 0, "key service stop");
+    DTKMServer_Log(__FILE__, __LINE__, DTKMServerLevel[2], 0, "key service stop");
+    pthread_exit(&logMonitoringThreadId);
     return 0;
 }

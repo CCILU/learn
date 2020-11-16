@@ -20,7 +20,7 @@
 ***********************************************/
 #include "keyApiFun.h"
 
-#define DEBUG_KEYAPI
+//#define DEBUG_KEYAPI
 
 #ifdef DEBUG_KEYAPI
 int  DTKMServerLevel[5] = {DT_NO_LOG_LEVEL, DT_DEBUG_LEVEL, DT_INFO_LEVEL, DT_WARNING_LEVEL, DT_ERROR_LEVEL};
@@ -192,7 +192,6 @@ static int useKey(KEYHANLDEPTR keyHandle) {
     keyHandle->_ConHandle = connectContainer(UseString, keyHandle->_AppHandle);
     if(keyHandle->_ConHandle == false) {
         DTKMServer_Log(__FILE__, __LINE__, DTKMServerLevel[4], 0, "UseKey connectContainer error!");
-       
         free(UseString);
         UseString = NULL;
         return false;
@@ -209,7 +208,7 @@ static void freeAllHandle(KEYHANDLE  keyHandle){
     SKF_DisConnectDev(keyHandle._DevHandle);
 }
 
-int KeyLogInWithVerifyUserPin(LPSTR szPIN) { 
+int KeyLogInWithVerifyUserPin(char *KeyPin) {
     KEYHANDLE  keyHandle = {0};
     ULONG pulRetryCount = 0;
     int ret = 3;
@@ -218,7 +217,7 @@ int KeyLogInWithVerifyUserPin(LPSTR szPIN) {
         DTKMServer_Log(__FILE__, __LINE__, DTKMServerLevel[4], 0, "KeyLogInWithVerifyUserPin UseKey error!");
         return false;
     }
-    ret = SKF_VerifyPIN(keyHandle._AppHandle, 1, szPIN, &pulRetryCount);
+    ret = SKF_VerifyPIN(keyHandle._AppHandle, 1, KeyPin, &pulRetryCount);
     if(ret != 0x00) {
         DTKMServer_Log(__FILE__, __LINE__, DTKMServerLevel[4], 0, "KeyLogInWithVerifyUserPin SKF_VerifyPIN error! ret is %X, pulRetryCount is %d", ret, pulRetryCount);
         return false;
@@ -228,7 +227,7 @@ int KeyLogInWithVerifyUserPin(LPSTR szPIN) {
     return success;
 }
 //函数输出参数时将结构体转换为一个字符串并使用BASE64编码进行输出，避免数据传输时的二次组包
-int SignMessageWithEccKeyAndWithoutSm3(BYTE *pbData, ULONG  ulDataLen, char *SignOut) {
+int SignMessageWithEccKeyAndWithoutSm3(char *pbData, ULONG ulDataLen, char *SignOut) {
     KEYHANDLE  keyHandle = {0};
     ULONG pulRetryCount = 0;
     ECCSIGNATUREBLOB pSignature = {0};
@@ -263,6 +262,7 @@ void main() {
     int ret = 3;
     char indata[] = "12345678123456781234567812345678";
     char oudata[128] = {0};
+    char indata2[] = "hello";
     ret = KeyLogInWithVerifyUserPin("111111");
     printf("ret = %d\n", ret);
     ret = SignMessageWithEccKeyAndWithoutSm3(indata, 32, oudata);

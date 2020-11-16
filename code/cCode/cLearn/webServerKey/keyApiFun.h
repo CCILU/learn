@@ -19,6 +19,7 @@ static HCONTAINER connectContainer(char *_conName, HAPPLICATION hApplication);
 static int useKey(KEYHANLDEPTR keyHandle);
 static void freeAllHandle(KEYHANDLE  keyHandle);
 
-int KeyLogInWithVerifyUserPin(LPSTR szPIN);
+int KeyLogInWithVerifyUserPin(char *KeyPin);
+int SignMessageWithEccKeyAndWithoutSm3(char *pbData, ULONG ulDataLen, char *SignOut);
 
 #endif

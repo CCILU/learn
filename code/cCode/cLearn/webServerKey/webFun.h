@@ -30,6 +30,7 @@
 #define false   -1
 #define success 0
 
+int daemon_init();
 void handle_signal(int sign); // 退出信号处理
 void http_send(int sock,char *content); // http 发送相应报文
 void logMonitoringThread(void); //线程函数
