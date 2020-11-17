@@ -108,16 +108,17 @@ int main(int argc, char *argv[]) {
 			printf("json = %s\n",json);
 		}
 		else {
-			printf("buffer no json\n");
-            //http_send(sock_client,retJson);
+			//printf("buffer no json\n");
 			continue;
 		}
 		rv = invokeKeyfunc(json, retJson);
         if(rv != 0) {
+            http_send(sock_client,retJson);
+            printf("retJson = %s\n",retJson);
             DTKMServer_Log(__FILE__, __LINE__, DTKMServerLevel[4], 0, "invokeKeyfunc error!");
             continue;
         }
-        printf("invokeKeyfunc rv= %X\n",rv);
+        DTKMServer_Log(__FILE__, __LINE__, DTKMServerLevel[2], 0, "invokeKeyfunc rv= %X", rv);
 		printf("retJson = %s\n",retJson);
 		http_send(sock_client,retJson);
         close(sock_client);

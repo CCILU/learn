@@ -63,7 +63,6 @@ void logMonitoringThread(void) {
 int invokeKeyfunc(char *content,char* retJson) {
     cJSON  *root,*func,*param1,*param2,*param3,*param4,*param5,*param6,*param7,*param8,*param9;
 
-	printf("invokeKeyfunc content = %s\n",content);
     root = cJSON_Parse(content);
     if(root == NULL) {
 		strcpy(retJson,"{\"data\":\"error\"}");
@@ -97,6 +96,33 @@ int invokeKeyfunc(char *content,char* retJson) {
 			return false;
 		}
 		cJSON_AddItemToObject(returnJson, "rtnCode", cJSON_CreateNumber(0));
+		strcpy(retJson, cJSON_Print(returnJson));
+		return success;
+	}
+	else if(!strcmp(func->valuestring, "SignMessageWithEccKeyAndWithoutSm3")) {
+		char SignOut[TINY_Buff] = {0};
+		cJSON * returnJson =  cJSON_CreateObject();
+		param1 = cJSON_GetObjectItem(root, "pbData");
+		if(!param1 || param1->type != cJSON_String) {
+			strcpy(retJson,"{\"rtnCode\":false,\"data\":\"error0\"}");
+			return false;
+		}
+		param2 = cJSON_GetObjectItem(root,"ulDataLen");
+		if(!param2 || param2->type!=cJSON_Number)
+		{
+			strcpy(retJson,"{\"rtnCode\":-1,\"data\":\"error7\"}");
+			return -1;
+		}
+		int rv = SignMessageWithEccKeyAndWithoutSm3(param1->valuestring, param2->valueint, SignOut);
+		if(rv !=0) {
+			cJSON_AddItemToObject(returnJson, "rtnCode", cJSON_CreateNumber(rv));
+			cJSON_AddItemToObject(returnJson, "data", cJSON_CreateString("error"));
+			strcpy(retJson, cJSON_Print(returnJson));
+			DTKMServer_Log(__FILE__, __LINE__, DTKMServerLevel[4], 0, "SignMessageWithEccKeyAndWithoutSm3  error!");
+			return false;
+		}
+		cJSON_AddItemToObject(returnJson, "rtnCode", cJSON_CreateNumber(0));
+		cJSON_AddItemToObject(returnJson, "data", cJSON_CreateString(SignOut));
 		strcpy(retJson, cJSON_Print(returnJson));
 		return success;
 	}

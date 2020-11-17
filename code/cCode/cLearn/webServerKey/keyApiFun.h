@@ -21,5 +21,5 @@ static void freeAllHandle(KEYHANDLE  keyHandle);
 
 int KeyLogInWithVerifyUserPin(char *KeyPin);
 int SignMessageWithEccKeyAndWithoutSm3(char *pbData, ULONG ulDataLen, char *SignOut);
-
+//int SignMessageWithEccKeyAndWithoutSm3(char *pbData, ULONG ulDataLen);//网页调用只传入前两个参数
 #endif

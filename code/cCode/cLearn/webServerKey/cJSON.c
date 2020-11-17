@@ -841,15 +841,14 @@ cJSON *cJSON_ParseWithOpts(const char *value, const char **return_parse_end, cjb
     {
         return NULL;
     }
-
     end = parse_value(c, skip((const unsigned char*)value), ep);
     if (!end)
     {
         /* parse failure. ep is set. */
+        //tzy
         cJSON_Delete(c);
         return NULL;
     }
-
     /* if we require null-terminated JSON without appended garbage, skip and then check for a null terminator */
     if (require_null_terminated)
     {
@@ -865,7 +864,6 @@ cJSON *cJSON_ParseWithOpts(const char *value, const char **return_parse_end, cjb
     {
         *return_parse_end = (const char*)end;
     }
-
     return c;
 }
 
