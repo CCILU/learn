@@ -20,6 +20,7 @@ char *http_res_tmpl = "HTTP/1.1 200 OK\r\n"
 
 
 int main(int argc, char *argv[]) {
+    //daemon_init();//守护进程
     int portInt = 0;
     int rv = 0;
     int opt=1;
@@ -85,7 +86,7 @@ int main(int argc, char *argv[]) {
     while(1) {
 		memset(retJson, 0, BUFF_SIZE);
         memset(buff, 0, BUFF_SIZE);
-        printf("等待连接...\n");
+        //printf("等待连接...\n");
         int sock_client = accept(sockfd,(struct sockaddr *)&claddr, &length);
         if(sock_client < 0) {
             perror("accept error");

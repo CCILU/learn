@@ -80,6 +80,7 @@ int invokeKeyfunc(char *content,char* retJson) {
 		strcpy(retJson,"{\"data\":\"hello\"}");
 		return success;
 	}
+	//int KeyLogInWithVerifyUserPin(char *KeyPin);
     else if(!strcmp(func->valuestring, "KeyLogInWithVerifyUserPin")) {
 		cJSON * returnJson =  cJSON_CreateObject();
 		param1 = cJSON_GetObjectItem(root, "KeyPin");
@@ -99,6 +100,7 @@ int invokeKeyfunc(char *content,char* retJson) {
 		strcpy(retJson, cJSON_Print(returnJson));
 		return success;
 	}
+	//int SignMessageWithEccKeyAndWithoutSm3(char *pbData, ULONG ulDataLen, char *SignOut);
 	else if(!strcmp(func->valuestring, "SignMessageWithEccKeyAndWithoutSm3")) {
 		char SignOut[TINY_Buff] = {0};
 		cJSON * returnJson =  cJSON_CreateObject();
@@ -126,7 +128,35 @@ int invokeKeyfunc(char *content,char* retJson) {
 		strcpy(retJson, cJSON_Print(returnJson));
 		return success;
 	}
-	// SignMessageVerifyWithoutSm3(char *ECCPubKey, char *pbData, ULONG  ulDataLen, char *Signature);
+	//int SignMessageWithEccKeyAndWithSm3NoPid(char *pbData, ULONG ulDataLen, char *SignOut);
+	else if(!strcmp(func->valuestring, "SignMessageWithEccKeyAndWithSm3NoPid")) {
+		char SignOut[TINY_Buff] = {0};
+		cJSON * returnJson =  cJSON_CreateObject();
+		param1 = cJSON_GetObjectItem(root, "pbData");
+		if(!param1 || param1->type != cJSON_String) {
+			strcpy(retJson,"{\"rtnCode\":false,\"data\":\"error0\"}");
+			return false;
+		}
+		param2 = cJSON_GetObjectItem(root,"ulDataLen");
+		if(!param2 || param2->type != cJSON_Number)
+		{
+			strcpy(retJson,"{\"rtnCode\":-1,\"data\":\"error7\"}");
+			return -1;
+		}
+		int rv = SignMessageWithEccKeyAndWithSm3NoPid(param1->valuestring, param2->valueint, SignOut);
+		if(rv != success) {
+			cJSON_AddItemToObject(returnJson, "rtnCode", cJSON_CreateNumber(rv));
+			cJSON_AddItemToObject(returnJson, "data", cJSON_CreateString("error"));
+			strcpy(retJson, cJSON_Print(returnJson));
+			DTKMServer_Log(__FILE__, __LINE__, DTKMServerLevel[4], 0, "SignMessageWithEccKeyAndWithSm3NoPid  error!");
+			return false;
+		}
+		cJSON_AddItemToObject(returnJson, "rtnCode", cJSON_CreateNumber(0));
+		cJSON_AddItemToObject(returnJson, "data", cJSON_CreateString(SignOut));
+		strcpy(retJson, cJSON_Print(returnJson));
+		return success;
+	}
+	//int SignMessageVerifyWithoutSm3(char *ECCPubKey, char *pbData, ULONG  ulDataLen, char *Signature);
 	else if(!strcmp(func->valuestring, "SignMessageVerifyWithoutSm3")) {
 		cJSON * returnJson =  cJSON_CreateObject();
 		param1 = cJSON_GetObjectItem(root, "ECCPubKey");
@@ -162,6 +192,42 @@ int invokeKeyfunc(char *content,char* retJson) {
 		strcpy(retJson, cJSON_Print(returnJson));
 		return success;
 	}
+	//int SignMessageVerifyWithSm3NoPid(char *ECCPubKey, char *pbData, ULONG  ulDataLen, char *Signature);
+	else if(!strcmp(func->valuestring, "SignMessageVerifyWithSm3NoPid")) {
+		cJSON * returnJson =  cJSON_CreateObject();
+		param1 = cJSON_GetObjectItem(root, "ECCPubKey");
+		if(!param1 || param1->type != cJSON_String) {
+			strcpy(retJson,"{\"rtnCode\":false,\"data\":\"error0\"}");
+			return false;
+		}
+		param2 = cJSON_GetObjectItem(root, "pbData");
+		if(!param2 || param2->type != cJSON_String) {
+			strcpy(retJson,"{\"rtnCode\":false,\"data\":\"error0\"}");
+			return false;
+		}
+		param3 = cJSON_GetObjectItem(root,"ulDataLen");
+		if(!param3 || param3->type!=cJSON_Number)
+		{
+			strcpy(retJson,"{\"rtnCode\":-1,\"data\":\"error7\"}");
+			return -1;
+		}
+		param4 = cJSON_GetObjectItem(root, "Signature");
+		if(!param4 || param4->type != cJSON_String) {
+			strcpy(retJson,"{\"rtnCode\":false,\"data\":\"error0\"}");
+			return false;
+		}
+		int rv = SignMessageVerifyWithSm3NoPid(param1->valuestring, param2->valuestring, param3->valueint, param4->valuestring);
+		if(rv != success) {
+			cJSON_AddItemToObject(returnJson, "rtnCode", cJSON_CreateNumber(rv));
+			cJSON_AddItemToObject(returnJson, "data", cJSON_CreateString("error"));
+			strcpy(retJson, cJSON_Print(returnJson));
+			DTKMServer_Log(__FILE__, __LINE__, DTKMServerLevel[4], 0, "SignMessageVerifyWithSm3NoPid  error!");
+			return false;
+		}
+		cJSON_AddItemToObject(returnJson, "rtnCode", cJSON_CreateNumber(0));
+		strcpy(retJson, cJSON_Print(returnJson));
+		return success;
+	}
 	//int GetECCPublicKey(BOOL bSignFlag, char *PublicKey);//网页调用只传入前1个参数
 	else if(!strcmp(func->valuestring, "GetECCPublicKey")) {
 		char PublicKey[TINY_Buff+16] = {0};
@@ -179,11 +245,36 @@ int invokeKeyfunc(char *content,char* retJson) {
 			cJSON_AddItemToObject(returnJson, "rtnCode", cJSON_CreateNumber(rv));
 			cJSON_AddItemToObject(returnJson, "data", cJSON_CreateString("error"));
 			strcpy(retJson, cJSON_Print(returnJson));
-			DTKMServer_Log(__FILE__, __LINE__, DTKMServerLevel[4], 0, "SignMessageVerifyWithoutSm3  error!");
+			DTKMServer_Log(__FILE__, __LINE__, DTKMServerLevel[4], 0, "GetECCPublicKey  error!");
 			return false;
 		}
 		cJSON_AddItemToObject(returnJson, "rtnCode", cJSON_CreateNumber(0));
 		cJSON_AddItemToObject(returnJson, "data", cJSON_CreateString(PublicKey));
+		strcpy(retJson, cJSON_Print(returnJson));
+		return success;
+	}
+	//int GetCertificate(BOOL bSignFlag, char *certBuff)
+	else if(!strcmp(func->valuestring, "GetCertificate")) {
+		char certBuf[LARGE_Buff] = {0};
+		cJSON * returnJson =  cJSON_CreateObject();
+		param1 = cJSON_GetObjectItem(root,"bSignFlag");
+		if(!param1 || param1->type != cJSON_Number)
+		{
+			printf ("param1->valueint = %d, param1->valuestring = %s \n",param1->valueint, param1->valuestring);
+			strcpy(retJson,"{\"rtnCode\":-1,\"data\":\"error7\"}");
+			return -1;
+		}
+		printf ("param1->valueint = %d, param1->valuestring = %s \n",param1->valueint, param1->valuestring);
+		int rv = GetCertificate(param1->valueint, certBuf);
+		if(rv != success) {
+			cJSON_AddItemToObject(returnJson, "rtnCode", cJSON_CreateNumber(rv));
+			cJSON_AddItemToObject(returnJson, "data", cJSON_CreateString("error"));
+			strcpy(retJson, cJSON_Print(returnJson));
+			DTKMServer_Log(__FILE__, __LINE__, DTKMServerLevel[4], 0, "GetCertificate  error!");
+			return false;
+		}
+		cJSON_AddItemToObject(returnJson, "rtnCode", cJSON_CreateNumber(0));
+		cJSON_AddItemToObject(returnJson, "data", cJSON_CreateString(certBuf));
 		strcpy(retJson, cJSON_Print(returnJson));
 		return success;
 	}
