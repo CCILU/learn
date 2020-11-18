@@ -22,4 +22,6 @@ static void freeAllHandle(KEYHANDLE  keyHandle);
 int KeyLogInWithVerifyUserPin(char *KeyPin);
 int SignMessageWithEccKeyAndWithoutSm3(char *pbData, ULONG ulDataLen, char *SignOut);
 //int SignMessageWithEccKeyAndWithoutSm3(char *pbData, ULONG ulDataLen);//网页调用只传入前两个参数
+int SignMessageVerifyWithoutSm3(char *ECCPubKey, char *pbData, ULONG  ulDataLen, char *Signature);
+int GetECCPublicKey(BOOL bSignFlag, char *PublicKey);//网页调用只传入前1个参数
 #endif

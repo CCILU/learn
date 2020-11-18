@@ -88,7 +88,7 @@ int invokeKeyfunc(char *content,char* retJson) {
 			return false;
 		}
 		int rv = KeyLogInWithVerifyUserPin(param1->valuestring);
-		if(rv !=0) {
+		if(rv != success) {
 			cJSON_AddItemToObject(returnJson, "rtnCode", cJSON_CreateNumber(rv));
 			cJSON_AddItemToObject(returnJson, "data", cJSON_CreateString("error"));
 			strcpy(retJson, cJSON_Print(returnJson));
@@ -108,13 +108,13 @@ int invokeKeyfunc(char *content,char* retJson) {
 			return false;
 		}
 		param2 = cJSON_GetObjectItem(root,"ulDataLen");
-		if(!param2 || param2->type!=cJSON_Number)
+		if(!param2 || param2->type != cJSON_Number)
 		{
 			strcpy(retJson,"{\"rtnCode\":-1,\"data\":\"error7\"}");
 			return -1;
 		}
 		int rv = SignMessageWithEccKeyAndWithoutSm3(param1->valuestring, param2->valueint, SignOut);
-		if(rv !=0) {
+		if(rv != success) {
 			cJSON_AddItemToObject(returnJson, "rtnCode", cJSON_CreateNumber(rv));
 			cJSON_AddItemToObject(returnJson, "data", cJSON_CreateString("error"));
 			strcpy(retJson, cJSON_Print(returnJson));
@@ -123,6 +123,67 @@ int invokeKeyfunc(char *content,char* retJson) {
 		}
 		cJSON_AddItemToObject(returnJson, "rtnCode", cJSON_CreateNumber(0));
 		cJSON_AddItemToObject(returnJson, "data", cJSON_CreateString(SignOut));
+		strcpy(retJson, cJSON_Print(returnJson));
+		return success;
+	}
+	// SignMessageVerifyWithoutSm3(char *ECCPubKey, char *pbData, ULONG  ulDataLen, char *Signature);
+	else if(!strcmp(func->valuestring, "SignMessageVerifyWithoutSm3")) {
+		cJSON * returnJson =  cJSON_CreateObject();
+		param1 = cJSON_GetObjectItem(root, "ECCPubKey");
+		if(!param1 || param1->type != cJSON_String) {
+			strcpy(retJson,"{\"rtnCode\":false,\"data\":\"error0\"}");
+			return false;
+		}
+		param2 = cJSON_GetObjectItem(root, "pbData");
+		if(!param2 || param2->type != cJSON_String) {
+			strcpy(retJson,"{\"rtnCode\":false,\"data\":\"error0\"}");
+			return false;
+		}
+		param3 = cJSON_GetObjectItem(root,"ulDataLen");
+		if(!param3 || param3->type!=cJSON_Number)
+		{
+			strcpy(retJson,"{\"rtnCode\":-1,\"data\":\"error7\"}");
+			return -1;
+		}
+		param4 = cJSON_GetObjectItem(root, "Signature");
+		if(!param4 || param4->type != cJSON_String) {
+			strcpy(retJson,"{\"rtnCode\":false,\"data\":\"error0\"}");
+			return false;
+		}
+		int rv = SignMessageVerifyWithoutSm3(param1->valuestring, param2->valuestring, param3->valueint, param4->valuestring);
+		if(rv != success) {
+			cJSON_AddItemToObject(returnJson, "rtnCode", cJSON_CreateNumber(rv));
+			cJSON_AddItemToObject(returnJson, "data", cJSON_CreateString("error"));
+			strcpy(retJson, cJSON_Print(returnJson));
+			DTKMServer_Log(__FILE__, __LINE__, DTKMServerLevel[4], 0, "SignMessageVerifyWithoutSm3  error!");
+			return false;
+		}
+		cJSON_AddItemToObject(returnJson, "rtnCode", cJSON_CreateNumber(0));
+		strcpy(retJson, cJSON_Print(returnJson));
+		return success;
+	}
+	//int GetECCPublicKey(BOOL bSignFlag, char *PublicKey);//网页调用只传入前1个参数
+	else if(!strcmp(func->valuestring, "GetECCPublicKey")) {
+		char PublicKey[TINY_Buff+16] = {0};
+		cJSON * returnJson =  cJSON_CreateObject();
+		param1 = cJSON_GetObjectItem(root,"bSignFlag");
+		if(!param1 || param1->type != cJSON_Number)
+		{
+			printf ("param1->valueint = %d, param1->valuestring = %s \n",param1->valueint, param1->valuestring);
+			strcpy(retJson,"{\"rtnCode\":-1,\"data\":\"error7\"}");
+			return -1;
+		}
+		printf ("param1->valueint = %d, param1->valuestring = %s \n",param1->valueint, param1->valuestring);
+		int rv = GetECCPublicKey(param1->valueint, PublicKey);
+		if(rv != success) {
+			cJSON_AddItemToObject(returnJson, "rtnCode", cJSON_CreateNumber(rv));
+			cJSON_AddItemToObject(returnJson, "data", cJSON_CreateString("error"));
+			strcpy(retJson, cJSON_Print(returnJson));
+			DTKMServer_Log(__FILE__, __LINE__, DTKMServerLevel[4], 0, "SignMessageVerifyWithoutSm3  error!");
+			return false;
+		}
+		cJSON_AddItemToObject(returnJson, "rtnCode", cJSON_CreateNumber(0));
+		cJSON_AddItemToObject(returnJson, "data", cJSON_CreateString(PublicKey));
 		strcpy(retJson, cJSON_Print(returnJson));
 		return success;
 	}

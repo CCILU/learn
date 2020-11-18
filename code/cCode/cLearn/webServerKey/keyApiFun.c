@@ -20,13 +20,15 @@
 ***********************************************/
 #include "keyApiFun.h"
 
-//#define DEBUG_KEYAPI
+#define DEBUG_KEYAPI //去除注释可进行单C程序测试
 
 #ifdef DEBUG_KEYAPI
 int  DTKMServerLevel[5] = {DT_NO_LOG_LEVEL, DT_DEBUG_LEVEL, DT_INFO_LEVEL, DT_WARNING_LEVEL, DT_ERROR_LEVEL};
 #else
 extern int  DTKMServerLevel[];
 #endif
+
+HANDLE phKey;
 
 static int enumKey(char *_keyName) { //默认一个设备
     ULONG ret = 0;
@@ -256,18 +258,132 @@ int SignMessageWithEccKeyAndWithoutSm3(char *pbData, ULONG ulDataLen, char *Sign
     return success;
 }
 
+int SignMessageVerifyWithoutSm3(char *ECCPubKey, char *pbData, ULONG  ulDataLen, char *Signature) {
+    KEYHANDLE  keyHandle = {0};
+    char       MidData[TINY_Buff] = {0};
+    int        ret = 8;
+    unsigned long  bin_size = 0;
+    //SKF_ECCVerify(DEVHANDLE hDev , ECCPUBLICKEYBLOB* pECCPubKeyBlob, BYTE *pbData, ULONG  ulDataLen, PECCSIGNATUREBLOB pSignature);
+    ECCSIGNATUREBLOB pSignature = {0};
+    ECCPUBLICKEYBLOB ECCPubKeyBlob = {0};
+    ret = useKey(&keyHandle);
+    if(ret != success) {
+        DTKMServer_Log(__FILE__, __LINE__, DTKMServerLevel[4], 0, "SignMessageVerifyWithoutSm3 UseKey error!");
+        return false;
+    }
+    ret = base64_decode(ECCPubKey, MidData, &bin_size);
+    if(ret != success) {
+        DTKMServer_Log(__FILE__, __LINE__, DTKMServerLevel[4], 0, "SignMessageVerifyWithoutSm3 base64_decode ECCPubKey error! ret is %X, ", ret);
+        return false;
+    }
+    memcpy((char *)ECCPubKeyBlob.XCoordinate+32, MidData, 32);
+    memcpy((char *)ECCPubKeyBlob.YCoordinate+32, MidData+32, 32);
+    memset(MidData, 0x00, TINY_Buff);
+    ret = base64_decode(Signature, MidData, &bin_size);
+    if(ret != success) {
+        DTKMServer_Log(__FILE__, __LINE__, DTKMServerLevel[4], 0, "SignMessageVerifyWithoutSm3 base64_decode  Signature error! ret is %X, ", ret);
+        return false;
+    }
+    memcpy((char *)pSignature.r+32, MidData, 32);
+    memcpy((char *)pSignature.s+32, MidData+32, 32);
+    ret = SKF_ECCVerify(keyHandle._DevHandle, &ECCPubKeyBlob, pbData, ulDataLen, &pSignature);
+    if(ret != 0x00) {
+        DTKMServer_Log(__FILE__, __LINE__, DTKMServerLevel[4], 0, "SignMessageWithEccKeyAndWithoutSm3 SKF_ECCVerify error! ret is %X, ", ret);
+        return false;
+    }
+    freeAllHandle(keyHandle);
+    DTKMServer_Log(__FILE__, __LINE__, DTKMServerLevel[2], 0, "SignMessageVerifyWithoutSm3 success! ret is %X", ret);
+    return success;
+}
+
+int GetECCPublicKey(BOOL bSignFlag, char *PublicKey) {//默认一个应用，一个容器 1:签名 0：加密
+    KEYHANDLE  keyHandle = {0};
+    int        ret = 8;
+    char       MidData[TINY_Buff] = {0};
+    ULONG      pulBlobLen = 0;
+    ret = useKey(&keyHandle);
+    if(ret != success) {
+        DTKMServer_Log(__FILE__, __LINE__, DTKMServerLevel[4], 0, "GetECCPublicKey UseKey error!");
+        return false;
+    }
+    ret = SKF_ExportPublicKey(keyHandle._ConHandle, bSignFlag, PublicKey, &pulBlobLen);
+    if(ret != 0x00) {
+        DTKMServer_Log(__FILE__, __LINE__, DTKMServerLevel[4], 0, "GetECCPublicKey SKF_ExportPublicKey error! ret is %X, ", ret);
+        return false;
+    }
+    memcpy(MidData, PublicKey+4+32, 32);
+    memcpy(MidData+32, PublicKey+4+32+32+32, 32);
+    //PrintHex("GetECCPublicKey", MidData, 64, 16);
+    memset(PublicKey, 0x00, TINY_Buff+16);
+    ret = base64_encode(MidData, 64, PublicKey);
+    if(ret != success) {
+        DTKMServer_Log(__FILE__, __LINE__, DTKMServerLevel[4], 0, "SignMessageWithEccKeyAndWithoutSm3 base64_encode error! ret is %X, ", ret);
+        return false;
+    }
+    freeAllHandle(keyHandle);
+    DTKMServer_Log(__FILE__, __LINE__, DTKMServerLevel[2], 0, "GetECCPublicKey success! PublicKey is %s", PublicKey);
+    return success;
+}
+
+int SetSessionKeyAndMessageEncrypt(BYTE* SessionKey,BYTE *pbData, ULONG ulDataLen, char* pbEncryptedData) {
+    KEYHANDLE  keyHandle = {0};
+    BLOCKCIPHERPARAM EncryptParam;
+    ULONG pulEncryptedLen = 0;
+    char MidData[MEDIUM_Buff] = {0};
+    int        ret = 8;
+    ret = useKey(&keyHandle);
+    if(ret != success) {
+        DTKMServer_Log(__FILE__, __LINE__, DTKMServerLevel[4], 0, "SetSessionKey UseKey error!");
+        return false;
+    }
+    ret = SKF_SetSymmKey(keyHandle._DevHandle, SessionKey, SGD_SM4_ECB, &phKey);
+    if(ret != 0x00) {
+        DTKMServer_Log(__FILE__, __LINE__, DTKMServerLevel[4], 0, "SetSessionKey SKF_SetSymmKey error! ret is %X, ", ret);
+        return false;
+    }
+    DTKMServer_Log(__FILE__, __LINE__, DTKMServerLevel[2], 0, "SetSessionKeyAndMessageEncrypt success! SetSessionKey handle is %X", phKey);
+    ret = SKF_EncryptInit (phKey, EncryptParam);
+    if(ret != 0x00) {
+        DTKMServer_Log(__FILE__, __LINE__, DTKMServerLevel[4], 0, "MessageEncrypt SKF_EncryptInit error! ret is %X, ", ret);
+        return false;
+    }
+    DTKMServer_Log(__FILE__, __LINE__, DTKMServerLevel[2], 0, "SetSessionKeyAndMessageEncrypt success! SKF_EncryptInit is %X", ret);
+    ret = SKF_Encrypt(phKey, pbData, ulDataLen, MidData, &pulEncryptedLen);
+    if(ret != 0x00) {
+        DTKMServer_Log(__FILE__, __LINE__, DTKMServerLevel[4], 0, "MessageEncrypt SKF_Encrypt error! ret is %X, ", ret);
+        return false;
+    }
+    ret = base64_encode(MidData, pulEncryptedLen, pbEncryptedData);
+    if(ret != success) {
+        DTKMServer_Log(__FILE__, __LINE__, DTKMServerLevel[4], 0, "MessageEncrypt base64_encode error! ret is %X, ", ret);
+        return false;
+    }
+    DTKMServer_Log(__FILE__, __LINE__, DTKMServerLevel[2], 0, "SetSessionKeyAndMessageEncrypt success! SKF_Encrypt pbEncryptedData is %s", pbEncryptedData);
+    freeAllHandle(keyHandle);
+    return success;
+}
 
 #ifdef DEBUG_KEYAPI
 void main() {
     int ret = 3;
     char indata[] = "12345678123456781234567812345678";
+    char indata2[] = "1234567812345678123456781234567812345678123456781234567812345678123456781234567812345678123456781234567812345678123456781234567812345678123456781234567812345678123456781234567812345678123456781234567812345678123456781234567812345678123456781234567812345678123456781234567812345678123456781234567812345678123456781234567812345678123456781234567812345678123456781234567812345678123456781234567812345678123456781234567812345678123456781234567812345678123456781234567812345678123456781234567812345678123456781234567812345678123456781234567812345678123456781234567812345678123456781234567812345678123456781234567812345678123456781234567812345678123456781234567812345678123456781234567812345678123456781234567812345678123456781234567812345678123456781234567812345678123456781234567812345678123456781234567812345678123456781234567812345678123456781234567812345678123456781234567812345678123456781234567812345678123456781234567812345678123456781234567812345678123456781234567812345678123456781234567812345678123456781234567812345678";
     char oudata[128] = {0};
-    char indata2[] = "hello";
+    char PublicKey[TINY_Buff+16] = {0};
+    char pbEncryptedData[MEDIUM_Buff] = {0};
     ret = KeyLogInWithVerifyUserPin("111111");
-    printf("ret = %d\n", ret);
+    printf("KeyLogInWithVerifyUserPin ret = %d\n", ret);
     ret = SignMessageWithEccKeyAndWithoutSm3(indata, 32, oudata);
-    printf("ret = %d\n", ret);
+    printf("SignMessageWithEccKeyAndWithoutSm3 ret = %d\n", ret);
     printf("oudata = %s\n", oudata);
+    ret = GetECCPublicKey(1,PublicKey);
+    printf("GetECCPublicKey ret = %d\n", ret);
+    printf("PublicKey = %s\n", PublicKey);
+    ret = SignMessageVerifyWithoutSm3(PublicKey, indata, 32, oudata);
+    printf("SignMessageVerifyWithoutSm3 ret = %d\n", ret);
+    ret = SetSessionKeyAndMessageEncrypt("1111111111111111", indata2, 512, pbEncryptedData);
+    printf("SetSessionKeyAndMessageEncrypt ret = %d\n", ret);
+    printf("pbEncryptedData = %s\n", pbEncryptedData);
 }
 
 #endif

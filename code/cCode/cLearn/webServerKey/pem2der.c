@@ -139,7 +139,7 @@ int base64_decode(char* base64_data, unsigned char* bin_data, unsigned long* bin
 	char four_char[4],c;
 
 
-	if(base64_data == NULL) 
+	if(base64_data == NULL)
 	{
 			printf(" base64_decode bin_data == NULL \n");
 			return -1;
@@ -196,14 +196,14 @@ int base64_decode(char* base64_data, unsigned char* bin_data, unsigned long* bin
 			{
 				n++;
 			}
-		}	
+		}
 
 		switch(n)
 		{
 			case 0:
 				bin_data[l++] = (four_bin[0] << 2) | (four_bin[1] >> 4);
 				bin_data[l++] = (four_bin[1] << 4) | (four_bin[2] >> 2);
-				bin_data[l++] = (four_bin[2] << 6) | four_bin[3]; 
+				bin_data[l++] = (four_bin[2] << 6) | four_bin[3];
 				break;
 			case 1:
 				bin_data[l++] = (four_bin[0] << 2) | (four_bin[1] >> 4);
@@ -212,14 +212,13 @@ int base64_decode(char* base64_data, unsigned char* bin_data, unsigned long* bin
 			case 2:
 				bin_data[l++] = (four_bin[0] << 2) | (four_bin[1] >> 4);
 				break;
-	
 			default:
 				break;
 		}
 		if(n != 0)
 		{
 			break;
-		}	
+		}
 	}
 
 
