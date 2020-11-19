@@ -41,7 +41,6 @@ static int enumKey(char *_keyName) { //默认一个设备
         DTKMServer_Log(__FILE__, __LINE__, DTKMServerLevel[4], 0, "enumKey SKF_EnumDev error!%X", ret);
         return false;
     }
-    //printf("pulSize = %d\n",pulSize);
     KeyName = (char *)malloc(pulSize+1);
     if(KeyName == NULL) {
         DTKMServer_Log(__FILE__, __LINE__, DTKMServerLevel[4], 0, "enumKey malloc error!");
@@ -54,8 +53,6 @@ static int enumKey(char *_keyName) { //默认一个设备
         free(KeyName);
         return false;
     }
-    //printf("pulSize = %d\n",strlen(KeyName));
-    //printf("%s\n",KeyName);
     if(_keyName == NULL) {
         printf("_keyName is NULL\n");
         free(KeyName);
