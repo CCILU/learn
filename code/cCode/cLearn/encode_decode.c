@@ -3,26 +3,21 @@
 
 static char base64_table[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
 
-//base64±àÂë
+//base64ï¿½ï¿½ï¿½ï¿½
 static int base64_encode(unsigned char* bin_data, int bin_size, char* base64_data)
 {
     printf("  base64_encode start.\n");
-    
     int i,j,k,blk_size,remain_size;
     unsigned char *p, left[3];
-    
 	if (bin_data == NULL) 
 	{
 		printf("  base64_encode bin_data == NULL");
 		return -1;
 	}
-	
     blk_size = bin_size / 3;
     remain_size = bin_size % 3;
-	
     p = bin_data;
     j = 0;
-	
     for(i=0;i<blk_size;i++)
     {
         k = (p[0] & 0xFC) >> 2;
@@ -35,7 +30,6 @@ static int base64_encode(unsigned char* bin_data, int bin_size, char* base64_dat
         base64_data[j++] = base64_table[k];
         p += 3;
     }
-	
     switch(remain_size)
     {
 	case 0:
@@ -80,7 +74,7 @@ static int base64_encode(unsigned char* bin_data, int bin_size, char* base64_dat
 	return 0;
 }
 
-//base64½âÂë
+//base64ï¿½ï¿½ï¿½ï¿½
 static int base64_decode(char* base64_data, unsigned char* bin_data, int* bin_size)
 {
     printf("  base64_decode start.\n");
@@ -180,7 +174,7 @@ static int base64_decode(char* base64_data, unsigned char* bin_data, int* bin_si
 	return 0;
 }
 
-//¶þ½øÖÆ×ª16½øÖÆ
+//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½×ª16ï¿½ï¿½ï¿½ï¿½
 int AscToHex(unsigned char des[], unsigned char src[], int srclen)
 {
     printf("  AscToHex start.\n");
@@ -202,11 +196,11 @@ int AscToHex(unsigned char des[], unsigned char src[], int srclen)
     return 0;
 }
 
-//16½øÖÆ×ª¶þ½øÖÆ
+//16ï¿½ï¿½ï¿½ï¿½×ªï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 int HexToAsc(unsigned char* des, unsigned char* src ,int srclen)
 {
     printf("  HexToAsc start.\n");
-	
+
 	unsigned char ch1,ch2;
 	int i;
 	if (srclen%2 !=0)
@@ -263,7 +257,6 @@ int Hex_Asc(unsigned char *srcdata,int srcdataLen,unsigned char *desdata,int *de
 {
 	HexToAsc(desdata, srcdata, srcdataLen);
 	*desdataLen=srcdataLen/2;
-			
 	return 0;
 }
 int Asc_Base64(unsigned char *srcdata,int srcdataLen,unsigned char *desdata,int *desdataLen)
