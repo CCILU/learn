@@ -33,7 +33,7 @@ char *http_res_tmpl = "HTTP/1.1 200 OK\r\n"
 
 
 int main(int argc, char *argv[]) {
-    //daemon_init();//守护进程
+    daemon_init();//守护进程
     int portInt = 0;
     int rv = 0;
     int opt=1;
@@ -110,7 +110,7 @@ int main(int argc, char *argv[]) {
         int len = recv(sock_client, buff, BUFF_SIZE, 0);
         //int len = recv(sock_client,buff,sizeof(buff),0);
 		if( len > 0) {
-            printf("buff = %s\n", buff);
+            //printf("buff = %s\n", buff);
         }
 		else {
 			printf("recv error:%s\n", strerror(errno));
@@ -119,7 +119,7 @@ int main(int argc, char *argv[]) {
 		char* json = strstr(buff,"json=");
 		if(json != NULL) {
 			json = json+5;
-			printf("json = %s\n",json);
+			//printf("json = %s\n",json);
 		}
 		else {
 			//printf("buffer no json\n");
@@ -133,13 +133,13 @@ int main(int argc, char *argv[]) {
             continue;
         }
         DTKMServer_Log(__FILE__, __LINE__, DTKMServerLevel[2], 0, "invokeKeyfunc rv= %X", rv);
-		printf("retJson = %s\n",retJson);
+		//printf("retJson = %s\n",retJson);
 		http_send(sock_client,retJson);
         close(sock_client);
     }
     free(buff);
     free(retJson);
-    fputs("Bye Cleey",stdout);
+    //fputs("Bye Cleey",stdout);
     close(sockfd);
     DTKMServer_Log(__FILE__, __LINE__, DTKMServerLevel[2], 0, "key service stop");
     pthread_exit(&logMonitoringThreadId);

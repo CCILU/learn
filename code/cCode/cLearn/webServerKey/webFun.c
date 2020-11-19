@@ -110,6 +110,7 @@ int invokeKeyfunc(char *content,char* retJson) {
 			return false;
 		}
 		cJSON_AddItemToObject(returnJson, "rtnCode", cJSON_CreateNumber(0));
+		cJSON_AddItemToObject(returnJson, "data", cJSON_CreateString("success"));
 		strcpy(retJson, cJSON_Print(returnJson));
 		return success;
 	}
@@ -202,6 +203,7 @@ int invokeKeyfunc(char *content,char* retJson) {
 			return false;
 		}
 		cJSON_AddItemToObject(returnJson, "rtnCode", cJSON_CreateNumber(0));
+		cJSON_AddItemToObject(returnJson, "data", cJSON_CreateString("success"));
 		strcpy(retJson, cJSON_Print(returnJson));
 		return success;
 	}
@@ -238,6 +240,7 @@ int invokeKeyfunc(char *content,char* retJson) {
 			return false;
 		}
 		cJSON_AddItemToObject(returnJson, "rtnCode", cJSON_CreateNumber(0));
+		cJSON_AddItemToObject(returnJson, "data", cJSON_CreateString("success"));
 		strcpy(retJson, cJSON_Print(returnJson));
 		return success;
 	}
@@ -252,7 +255,6 @@ int invokeKeyfunc(char *content,char* retJson) {
 			strcpy(retJson,"{\"rtnCode\":-1,\"data\":\"error7\"}");
 			return -1;
 		}
-		printf ("param1->valueint = %d, param1->valuestring = %s \n",param1->valueint, param1->valuestring);
 		int rv = GetECCPublicKey(param1->valueint, PublicKey);
 		if(rv != success) {
 			cJSON_AddItemToObject(returnJson, "rtnCode", cJSON_CreateNumber(rv));
@@ -277,7 +279,6 @@ int invokeKeyfunc(char *content,char* retJson) {
 			strcpy(retJson,"{\"rtnCode\":-1,\"data\":\"error7\"}");
 			return -1;
 		}
-		printf ("param1->valueint = %d, param1->valuestring = %s \n",param1->valueint, param1->valuestring);
 		int rv = GetCertificate(param1->valueint, certBuf);
 		if(rv != success) {
 			cJSON_AddItemToObject(returnJson, "rtnCode", cJSON_CreateNumber(rv));
