@@ -62,7 +62,7 @@ int base64_encode(unsigned char* bin_data, unsigned long bin_size, char* base64_
 		unsigned char *p, left[3];
 
 
-		if (bin_data == NULL) 
+		if (bin_data == NULL)
 		{
 				printf(" base64_encode bin_data == NULL \n");
 				return -1;
@@ -223,5 +223,32 @@ int base64_decode(char* base64_data, unsigned char* bin_data, unsigned long* bin
 
 
 	*bin_size = l;
+	return 0;
+}
+int HexToAsc(unsigned char* src ,int srclen, unsigned char* des)
+{
+	unsigned char ch1,ch2;
+	int i;
+	if (srclen%2 !=0) {
+		return 1;
+	}
+	for(i=0;i<srclen/2;i++) {
+		ch1 = src[i*2];
+		ch2 = src[i*2+1];
+
+		(ch1>='a'&&ch1<='z')?(ch1-=32):ch1;
+		(ch2>='a'&&ch2<='z')?(ch2-=32):ch2;
+
+    if ((((ch1<=0x39)&&(ch1>=0x30))||((ch1 <=0x46)&&(ch1>=0x41))||((ch1 <=0x66)&&(ch1>=0x61)))
+			&&(((ch2<=0x39)&&(ch2>=0x30))||((ch2 <=0x46)&&(ch2>=0x41))||((ch2 <=0x66)&&(ch2>=0x61)))) {
+			ch1 -= ((ch1>(9+0x30))?0x37:0x30);
+			ch2 -= ((ch2>(9+0x30))?0x37:0x30);
+
+			des[i]=(ch1<<4)|ch2;
+		}
+		else {
+			return 2;
+		}
+	}
 	return 0;
 }

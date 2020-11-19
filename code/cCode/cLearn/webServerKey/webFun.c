@@ -1,3 +1,16 @@
+/**********************************************
+ *编写时间：2020年11月10日
+ *编写人：田朝阳
+ *联系方式：17602929350
+ *版本定义：V0001.0000
+ *这个webFunc.c文件主要实现webServerKey.c中需求函数的实现，invokeKeyfunc调用keyApiFun.c中函数
+ *实现主要对入包的分析以及对智能密码钥匙的调用
+ *为方便测试和查看，不再进行多文件的区分，也不刻意严格保证一个函数不应该超过一定行数的规则
+ *此文件尽量使用比较全的英文单词作为函数与参数的命名，以确保在不用编写过多凌乱的注释说明来使
+ *阅读者尽量明白函数与参数的功能。
+ *注意与警告：
+ *以上若有其他问题请联系宋靖 微信号：songjing1807
+ ***********************************************/
 #include "webFun.h"
 #include "keyApiFun.h"
 
@@ -275,6 +288,72 @@ int invokeKeyfunc(char *content,char* retJson) {
 		}
 		cJSON_AddItemToObject(returnJson, "rtnCode", cJSON_CreateNumber(0));
 		cJSON_AddItemToObject(returnJson, "data", cJSON_CreateString(certBuf));
+		strcpy(retJson, cJSON_Print(returnJson));
+		return success;
+	}
+	//int SetSessionKeyAndMessageEncrypt(BYTE* SessionKey,BYTE *pbData, ULONG ulDataLen, char* pbEncryptedData);
+	else if(!strcmp(func->valuestring, "SetSessionKeyAndMessageEncrypt")) {
+		char pbEncryptedData[MEDIUM_Buff] = {0};
+		cJSON * returnJson =  cJSON_CreateObject();
+		param1 = cJSON_GetObjectItem(root, "SessionKey");
+		if(!param1 || param1->type != cJSON_String) {
+			strcpy(retJson,"{\"rtnCode\":false,\"data\":\"error0\"}");
+			return false;
+		}
+		param2 = cJSON_GetObjectItem(root, "pbData");
+		if(!param2 || param2->type != cJSON_String) {
+			strcpy(retJson,"{\"rtnCode\":false,\"data\":\"error0\"}");
+			return false;
+		}
+		param3 = cJSON_GetObjectItem(root,"ulDataLen");
+		if(!param3 || param3->type!=cJSON_Number)
+		{
+			strcpy(retJson,"{\"rtnCode\":-1,\"data\":\"error7\"}");
+			return -1;
+		}
+		int rv = SetSessionKeyAndMessageEncrypt(param1->valuestring, param2->valuestring, param3->valueint, pbEncryptedData);
+		if(rv != success) {
+			cJSON_AddItemToObject(returnJson, "rtnCode", cJSON_CreateNumber(rv));
+			cJSON_AddItemToObject(returnJson, "data", cJSON_CreateString("error"));
+			strcpy(retJson, cJSON_Print(returnJson));
+			DTKMServer_Log(__FILE__, __LINE__, DTKMServerLevel[4], 0, "SetSessionKeyAndMessageEncrypt  error!");
+			return false;
+		}
+		cJSON_AddItemToObject(returnJson, "rtnCode", cJSON_CreateNumber(0));
+		cJSON_AddItemToObject(returnJson, "data", cJSON_CreateString(pbEncryptedData));
+		strcpy(retJson, cJSON_Print(returnJson));
+		return success;
+	}
+	//int SetSessionKeyAndMessageDecrypt(BYTE* SessionKey, BYTE *pbData, ULONG ulDataLen, char* pbDecryptData);
+	else if(!strcmp(func->valuestring, "SetSessionKeyAndMessageDecrypt")) {
+        char pbDecryptData[MEDIUM_Buff] = {0};
+		cJSON * returnJson =  cJSON_CreateObject();
+		param1 = cJSON_GetObjectItem(root, "SessionKey");
+		if(!param1 || param1->type != cJSON_String) {
+			strcpy(retJson,"{\"rtnCode\":false,\"data\":\"error0\"}");
+			return false;
+		}
+		param2 = cJSON_GetObjectItem(root, "pbData");
+		if(!param2 || param2->type != cJSON_String) {
+			strcpy(retJson,"{\"rtnCode\":false,\"data\":\"error0\"}");
+			return false;
+		}
+		param3 = cJSON_GetObjectItem(root,"ulDataLen");
+		if(!param3 || param3->type!=cJSON_Number)
+		{
+			strcpy(retJson,"{\"rtnCode\":-1,\"data\":\"error7\"}");
+			return -1;
+		}
+		int rv = SetSessionKeyAndMessageDecrypt(param1->valuestring, param2->valuestring, param3->valueint, pbDecryptData);
+		if(rv != success) {
+			cJSON_AddItemToObject(returnJson, "rtnCode", cJSON_CreateNumber(rv));
+			cJSON_AddItemToObject(returnJson, "data", cJSON_CreateString("error"));
+			strcpy(retJson, cJSON_Print(returnJson));
+			DTKMServer_Log(__FILE__, __LINE__, DTKMServerLevel[4], 0, "SetSessionKeyAndMessageDecrypt  error!");
+			return false;
+		}
+		cJSON_AddItemToObject(returnJson, "rtnCode", cJSON_CreateNumber(0));
+		cJSON_AddItemToObject(returnJson, "data", cJSON_CreateString(pbDecryptData));
 		strcpy(retJson, cJSON_Print(returnJson));
 		return success;
 	}
