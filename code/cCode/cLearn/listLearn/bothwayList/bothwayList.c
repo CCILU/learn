@@ -25,7 +25,7 @@ int headListInit(POINTLISTPTR *_pointList) {
     return 1;
 }
 
-int deleteHeadList(POINTLISTPTR _pointList)
+int deleteHeadList(POINTLISTPTR *_pointList)
 {
     free(_pointList);
     _pointList = NULL;
