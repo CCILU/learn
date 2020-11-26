@@ -9,13 +9,11 @@
 	function KeyLogInWithVerifyUserPin(param1)
 	{//eg:KeyLogInWithVerifyUserPin('111111')
 		var _xmlhttp ;
-		var _url = "http://192.168.9.202:51234";
+		var _url = "http://127.0.0.1:51234";
 		var temp;
 		var str;
-				
-		str='{\"func\":\"KeyLogInWithVerifyUserPin\",\"KeyPin\":\"'+param1+'\"'+'}';			
+		str='{\"func\":\"KeyLogInWithVerifyUserPin\",\"KeyPin\":\"'+param1+'\"'+'}';
 		str="json="+str;
-		
 		if(_xmlhttp == null) {
 			if (window.XMLHttpRequest) {
 				_xmlhttp = new XMLHttpRequest();
@@ -30,7 +28,7 @@
 		if(_xmlhttp.readyState == 4 && _xmlhttp.status == 200) {
 			var obj = eval("(" + _xmlhttp.responseText + ")");
 			console.log("obj: "+obj.data);				
-			var tmp = $URL.encode(obj.data);
+			var tmp = encodeURI(obj.data);
 			alert('obj.data: '+tmp);
 			return tmp;
 		}
@@ -43,7 +41,7 @@
 	function SignMessageWithEccKeyAndWithoutSm3(param1,param2)
 	{//eg:SignMessageWithEccKeyAndWithoutSm3('12345678123456781234567812345678',32)
 		var _xmlhttp ;
-		var _url = "http://192.168.9.202:51234";
+		var _url = "http://127.0.0.1:51234";
 		var temp;
 		var str;
 				
@@ -64,7 +62,7 @@
 		if(_xmlhttp.readyState == 4 && _xmlhttp.status == 200) {
 			var obj = eval("(" + _xmlhttp.responseText + ")");
 			console.log("obj: "+obj.data);				
-			var tmp = $URL.encode(obj.data);
+			var tmp = encodeURI(obj.data);
 			alert('obj.data: '+tmp);
 			return tmp;
 		}
@@ -77,7 +75,7 @@
 	function SignMessageWithEccKeyAndWithSm3NoPid(param1,param2)
 	{//eg:SignMessageWithEccKeyAndWithSm3NoPid('1234567812345678123456781234567812345678123456781234567812345678123456781234567812345678123456781234567812345678123456781234567812345678123456781234567812345678123456781234567812345678123456781234567812345678123456781234567812345678123456781234567812345678',256)
 		var _xmlhttp ;
-		var _url = "http://192.168.9.202:51234";
+		var _url = "http://127.0.0.1:51234";
 		var temp;
 		var str;
 				
@@ -98,7 +96,7 @@
 		if(_xmlhttp.readyState == 4 && _xmlhttp.status == 200) {
 			var obj = eval("(" + _xmlhttp.responseText + ")");
 			console.log("obj: "+obj.data);				
-			var tmp = $URL.encode(obj.data);
+			var tmp = encodeURI(obj.data);
 			alert('obj.data: '+tmp);
 			return tmp;
 		}
@@ -111,7 +109,7 @@
 	function GetECCPublicKey(param1)//1:签名 0：加密
 	{//eg:GetECCPublicKey(1)/GetECCPublicKey(0)
 		var _xmlhttp ;
-		var _url = "http://192.168.9.202:51234";
+		var _url = "http://127.0.0.1:51234";
 		var temp;
 		var str;
 		
@@ -132,7 +130,7 @@
 		if(_xmlhttp.readyState == 4 && _xmlhttp.status == 200) {
 			var obj = eval("(" + _xmlhttp.responseText + ")");
 			console.log("obj: "+obj.data);				
-			var tmp = $URL.encode(obj.data);
+			var tmp = encodeURI(obj.data);
 			alert('obj.data: '+tmp);
 			return tmp;
 		}
@@ -145,7 +143,7 @@
 	function SignMessageVerifyWithoutSm3(param1,param2,param3,param4)
 	{//eg:SignMessageVerifyWithoutSm3('QV1tavYYx7SwUypEmCIon/pTfLQHK4Cpdor3a/jG9Fad2lPDiUAoZD4jcbREdDJkoMmKTWbeX0Zea1UKiEYkOg==', '12345678123456781234567812345678', 32, 'j1R+DLFHpxtQnTY+dzAhPHpy7woOpXXjp8vgaO+97aJhK0ANpma4fttt9++JyqGACOVYPeom5waf16rZuLp5Eg==')
 		var _xmlhttp ;
-		var _url = "http://192.168.9.202:51234";
+		var _url = "http://127.0.0.1:51234";
 		var temp;
 		var str;
 		
@@ -166,7 +164,7 @@
 		if(_xmlhttp.readyState == 4 && _xmlhttp.status == 200) {
 			var obj = eval("(" + _xmlhttp.responseText + ")");
 			console.log("obj: "+obj.data);				
-			var tmp = $URL.encode(obj.data);
+			var tmp = encodeURI(obj.data);
 			alert('obj.data: '+tmp);
 			return tmp;
 		}
@@ -179,7 +177,7 @@
 	function SignMessageVerifyWithSm3NoPid(param1,param2,param3,param4)
 	{//eg:SignMessageVerifyWithSm3NoPid('QV1tavYYx7SwUypEmCIon/pTfLQHK4Cpdor3a/jG9Fad2lPDiUAoZD4jcbREdDJkoMmKTWbeX0Zea1UKiEYkOg==', '1234567812345678123456781234567812345678123456781234567812345678123456781234567812345678123456781234567812345678123456781234567812345678123456781234567812345678123456781234567812345678123456781234567812345678123456781234567812345678123456781234567812345678', 256, 'j1R+DLFHpxtQnTY+dzAhPHpy7woOpXXjp8vgaO+97aJhK0ANpma4fttt9++JyqGACOVYPeom5waf16rZuLp5Eg==')
 		var _xmlhttp ;
-		var _url = "http://192.168.9.202:51234";
+		var _url = "http://127.0.0.1:51234";
 		var temp;
 		var str;
 		
@@ -200,7 +198,7 @@
 		if(_xmlhttp.readyState == 4 && _xmlhttp.status == 200) {
 			var obj = eval("(" + _xmlhttp.responseText + ")");
 			console.log("obj: "+obj.data);				
-			var tmp = $URL.encode(obj.data);
+			var tmp = encodeURI(obj.data);
 			alert('obj.data: '+tmp);
 			return tmp;
 		}
@@ -213,7 +211,7 @@
 	function GetCertificate(param1)//1:签名 0：加密
 	{//eg:GetCertificate(1)/GetCertificate(0)
 		var _xmlhttp ;
-		var _url = "http://192.168.9.202:51234";
+		var _url = "http://127.0.0.1:51234";
 		var temp;
 		var str;
 		
@@ -234,7 +232,7 @@
 		if(_xmlhttp.readyState == 4 && _xmlhttp.status == 200) {
 			var obj = eval("(" + _xmlhttp.responseText + ")");
 			console.log("obj: "+obj.data);				
-			var tmp = $URL.encode(obj.data);
+			var tmp = encodeURI(obj.data);
 			alert('obj.data: '+tmp);
 			return tmp;
 		}
@@ -248,7 +246,7 @@
 	function SetSessionKeyAndMessageEncrypt(param1,param2,param3)//param2最大传入数据长度为512
 	{//eg:SetSessionKeyAndMessageEncrypt('QV1tavYYx7SwUypEmCIon/pTfLQHK4Cpdor3a/jG9Fad2lPDiUAoZD4jcbREdDJkoMmKTWbeX0Zea1UKiEYkOg==', '1234567812345678123456781234567812345678123456781234567812345678123456781234567812345678123456781234567812345678123456781234567812345678123456781234567812345678123456781234567812345678123456781234567812345678123456781234567812345678123456781234567812345678', 256, 'j1R+DLFHpxtQnTY+dzAhPHpy7woOpXXjp8vgaO+97aJhK0ANpma4fttt9++JyqGACOVYPeom5waf16rZuLp5Eg==')
 		var _xmlhttp ;
-		var _url = "http://192.168.9.202:51234";
+		var _url = "http://127.0.0.1:51234";
 		var temp;
 		var str;
 		
@@ -269,7 +267,7 @@
 		if(_xmlhttp.readyState == 4 && _xmlhttp.status == 200) {
 			var obj = eval("(" + _xmlhttp.responseText + ")");
 			console.log("obj: "+obj.data);				
-			var tmp = $URL.encode(obj.data);
+			var tmp = encodeURI(obj.data);
 			alert('obj.data: '+tmp);
 			return tmp;
 		}
@@ -282,7 +280,7 @@
 	function SetSessionKeyAndMessageDecrypt(param1,param2,param3)//param2最大传入数据长度为700
 	{//eg:SetSessionKeyAndMessageEncrypt('QV1tavYYx7SwUypEmCIon/pTfLQHK4Cpdor3a/jG9Fad2lPDiUAoZD4jcbREdDJkoMmKTWbeX0Zea1UKiEYkOg==', '1234567812345678123456781234567812345678123456781234567812345678123456781234567812345678123456781234567812345678123456781234567812345678123456781234567812345678123456781234567812345678123456781234567812345678123456781234567812345678123456781234567812345678', 256, 'j1R+DLFHpxtQnTY+dzAhPHpy7woOpXXjp8vgaO+97aJhK0ANpma4fttt9++JyqGACOVYPeom5waf16rZuLp5Eg==')
 		var _xmlhttp ;
-		var _url = "http://192.168.9.202:51234";
+		var _url = "http://127.0.0.1:51234";
 		var temp;
 		var str;
 		
@@ -303,7 +301,7 @@
 		if(_xmlhttp.readyState == 4 && _xmlhttp.status == 200) {
 			var obj = eval("(" + _xmlhttp.responseText + ")");
 			console.log("obj: "+obj.data);				
-			var tmp = $URL.encode(obj.data);
+			var tmp = encodeURI(obj.data);
 			alert('obj.data: '+tmp);
 			return tmp;
 		}

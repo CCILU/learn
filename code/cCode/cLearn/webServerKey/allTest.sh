@@ -1,1 +1,1 @@
-gcc -g -o allTest *.c -pthread -lm -lskf
+gcc -g -o webServerKey *.c -pthread -lm -lskf
