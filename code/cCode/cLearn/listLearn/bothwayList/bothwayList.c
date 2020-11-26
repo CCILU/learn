@@ -7,43 +7,40 @@ typedef struct bothwayList {
     struct bothwayList *prev;
 }BOTHWAYLIST, *BOTHWAYLISTPTR;
 
-typedef struct pointList {
-    BOTHWAYLISTPTR headList;
-    BOTHWAYLISTPTR endList;
-    int            count;
-}POINTLIST,*POINTLISTPTR;
-
-int headListInit(POINTLISTPTR *_pointList) {
-    *_pointList = (POINTLISTPTR)malloc(sizeof(POINTLIST));
+int headListInit(BOTHWAYLISTPTR *_pointList) {
+    *_pointList = (BOTHWAYLISTPTR)malloc(sizeof(BOTHWAYLIST));
     if(*_pointList == NULL) {
-        return 0;
+        return -1;
     }
-    (*_pointList)->endList = NULL;
-    (*_pointList)->headList = NULL;
-    (*_pointList)->count = 0;
+    (*_pointList)->data = 0;
+    (*_pointList)->next = NULL;
+    (*_pointList)->prev = NULL;
 
-    return 1;
+    return 0;
 }
 
-int deleteHeadList(POINTLISTPTR *_pointList)
+int addOneNode(BOTHWAYLISTPTR _pointList, int data, int *count) {
+    BOTHWAYLISTPTR userList = _pointList;
+
+
+    return 0;
+}
+
+int deleteHeadList(BOTHWAYLISTPTR *_pointList)
 {
-    free(_pointList);
-    _pointList = NULL;
-    return 1;
+    while((*_pointList) != NULL) {
+        BOTHWAYLISTPTR midList = (*_pointList)->next;
+        free((*_pointList));
+        (*_pointList) =  midList;          
+    }
+    return 0;
 }
 
 void main() {
-    int ret = 9;
-    POINTLISTPTR _pointList;
+    BOTHWAYLISTPTR _pointList;
+    int ret = 8;
+
     ret = headListInit(&_pointList);
-    printf("_pointList->count = %d\n",_pointList->count);
-    printf("_pointList->headList = %p\n",_pointList->headList);
-    printf("_pointList->endList = %p\n",_pointList->endList);
-    printf("_pointList = %p\n",_pointList);
-    printf("headListInit ret = %d\n",ret);
-    deleteHeadList(_pointList);
-    printf("_pointList->count = %d\n",_pointList->count);
-    printf("_pointList->headList = %p\n",_pointList->headList);
-    printf("_pointList->endList = %p\n",_pointList->endList);
-    printf("_pointList = %p\n",_pointList);
+    printf("%d \n", _pointList->data);
+    deleteHeadList(&_pointList);
 }
