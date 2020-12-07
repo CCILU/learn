@@ -16,14 +16,14 @@
 #define PROTOTYPES 1
 #endif
 
-/* POINTER defines a generic pointer type */
-typedef unsigned char *POINTER;
+// /* POINTER defines a generic pointer type */
+// typedef unsigned char *POINTER;
 
-/* UINT2 defines a two byte word */
-typedef unsigned short int UINT2;
+// /* UINT2 defines a two byte word */
+// typedef unsigned short int UINT2;
 
-/* UINT4 defines a four byte word */
-typedef unsigned int UINT4;
+// /* UINT4 defines a four byte word */
+// typedef unsigned int UINT4;
 
 #ifndef NULL_PTR
 #define NULL_PTR ((POINTER)0)

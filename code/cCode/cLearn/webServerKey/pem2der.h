@@ -1,5 +1,5 @@
-#ifndef _DTLOG_H_
-#define _DTLOG_H_
+#ifndef _PEM2DER_H_
+#define _PEM2DER_H_
 #include<stdio.h>
 #include<string.h>
 #include<errno.h>
